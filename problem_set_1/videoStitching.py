@@ -5,33 +5,24 @@ class Solution(object):
         :type time: int
         :rtype: int
         """
-        can_cover = False
-    
-        # Check if at least one clip can cover the entire duration T
-        for clip in clips:
-            if clip[1] >= time:
-                can_cover = True
-                break
-        
-        if not can_cover:
-            return -1
-        
-        start, s = 0, 0
-        
-        while start < time:
-            max_end, index = -1, -1
+        total_time_covered,c_used,itr = 0,0,0
+        saved =[0,0]
+        prev =[0,0]
+        while total_time_covered < time:
+            if itr < len(clips):
+                if clips[itr][0]<=saved[0] and clips[itr][1] > saved[1]:
+                    saved = clips[itr]
+                itr +=1
             
-            # Find the clip with the maximum end time that starts before or at the current start time
-            for i, clip in enumerate(clips):
-                if clip[0] <= start and max_end < clip[1]:
-                    max_end = clip[1]
-                    index = i
+            # print(itr, len(clips))
+            if itr==len(clips):
+                itr =0
+                total_time_covered +=saved[1] - prev[1]
+                if saved[1] == prev[1]:
+                    return -1
+                prev =saved
+                saved[0] = saved[1]
+                c_used +=1 
             
-            if index == -1:
-                return -1
-            
-            start = clips[index][1]
-            s += 1
+        return c_used
         
-        return s
-            
